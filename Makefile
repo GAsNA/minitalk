@@ -3,8 +3,8 @@
 LIBFT_PATH	=	./librairies/Libft/
 LIBFT		=	${LIBFT_PATH}libft.a
 
-#SRCS_S		=
-#SRCS_C		=
+SRCS_S		=	server.c
+SRCS_C		=	client.c
 
 OBJS_S		=	${SRCS_S:.c=.o}
 OBJS_C		=	${SRCS_C:.c=.o}
