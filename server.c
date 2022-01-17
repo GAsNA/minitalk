@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/13 19:31:44 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/17 17:54:35 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ static void	put_pid(void)
 
 int	main(void)
 {
-	put_pid();
 	ft_putstr_fd("Hello, i'm the server.\n", 1);
-	return (0);
+	put_pid();
 }

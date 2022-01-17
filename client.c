@@ -6,13 +6,13 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/13 19:57:44 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/17 15:06:18 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headers/minitalk.h"
 
-static void	manual(void)
+static void	fucking_manual(void)
 {
 	ft_putstr_fd("# Use: ./client [server PID] [message]\n", 1);
 	exit(0);
@@ -21,15 +21,22 @@ static void	manual(void)
 static void	success(int signal)
 {
 	(void) signal;
-	ft_putstr_fd("Success!", 1);
+	ft_putstr_fd("Success!\n", 1);
 }
 
 int	main(int ac, char **av)
 {
+	struct   sigaction sact;
+
 	(void) av;
-	ft_putstr_fd("Hello, i'm the client.\n", 1);
 	if (ac != 3)
-		manual();
-	signal(SIGUSR1, success);
+		fucking_manual();
+	sigemptyset(&sact.sa_mask);
+	sact.sa_flags = 0;
+	sact.sa_handler = success;
+	sigaction(SIGUSR1, &sact, NULL);
+	//ft_putstr_fd("Hello, i'm the client.\n", 1);
+	//signal(SIGUSR1, success);
+	kill(getpid(), SIGUSR1);
 	return (0);
 }
