@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/17 17:54:35 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/20 10:48:34 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,24 @@ static void	put_pid(void)
 	ft_putchar_fd('\n', 1);
 }
 
+static void	got_elem(int signal)
+{
+	
+}
+
+static void	receive_message(void)
+{
+	while (1)
+	{
+		signal(SIGUSR1, got_elem);
+		signal(SIGUSR2, got_elem);
+		pause();
+	}
+}
+
 int	main(void)
 {
 	ft_putstr_fd("Hello, i'm the server.\n", 1);
 	put_pid();
+	receive_message();
 }
