@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/20 10:35:27 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/24 15:22:11 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	send_message(int pid, char *str)
 	i = -1;
 	while (str[++i])
 		send_one(pid, str[i]);
-	sed_one(pid, '\0');
+	send_one(pid, '\0');
 }
 
 int	main(int ac, char **av)

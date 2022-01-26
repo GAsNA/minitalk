@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/20 10:48:34 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/24 15:21:38 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static void	put_pid(void)
 
 static void	got_elem(int signal)
 {
-	
+	ft_putnbr_fd(signal, 1);
 }
 
 static void	receive_message(void)
