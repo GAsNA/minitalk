@@ -44,8 +44,9 @@ DELETED_BIN		=	@$(call _VALID,"Binary deleted!")
 LIBFT_PATH		=	./librairies/Libft/
 LIBFT			=	${LIBFT_PATH}libft.a
 
-SRCS_S			=	server.c
-SRCS_C			=	client.c
+SRCS_PATH		=	./srcs/
+SRCS_S			=	${SRCS_PATH}server.c
+SRCS_C			=	${SRCS_PATH}client.c
 
 OBJS_S			=	${SRCS_S:.c=.o}
 OBJS_C			=	${SRCS_C:.c=.o}
