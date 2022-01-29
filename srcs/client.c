@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/28 12:18:58 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/29 21:20:47 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	send_one(int pid, char c)
 		return ;
 	bin[0] = '\0';
 	get_bin((unsigned int)c, &bin);
-	while (ft_strlen(bin) < 7)
+	while (ft_strlen(bin) < 8)
 		bin = ft_strjoin("0", bin);
 	i = -1;
 	while (bin[++i])

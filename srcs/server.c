@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/28 12:07:16 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/29 21:21:20 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	got_elem(int signal)
 		c = ft_strjoin(c, "0");
 	if (signal == SIGUSR2)
 		c = ft_strjoin(c, "1");
-	if (ft_strlen(c) == 7)
+	if (ft_strlen(c) == 8)
 	{
 		mem = ft_strjoin(mem, get_char(c));
 		c[0] = '\0';
