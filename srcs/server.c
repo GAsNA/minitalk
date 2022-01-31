@@ -6,17 +6,18 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/29 21:21:20 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/31 13:24:48 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minitalk.h"
 
-static void	put_pid(void)
+static void	double_free(char **s1, char **s2)
 {
-	ft_putstr_fd("PID: ", 1);
-	ft_putnbr_fd(getpid(), 1);
-	ft_putchar_fd('\n', 1);
+	free(*s1);
+	*s1 = NULL;
+	free(*s2);
+	*s2 = NULL;
 }
 
 static char	*get_char(char *c)
@@ -40,8 +41,10 @@ static char	*get_char(char *c)
 	return (str);
 }
 
-static void	init(char **c, char **mem, int *i)
+static void	get_signal(int signal, char **c, char **mem, int *i)
 {
+	char	*tmp;
+
 	if (!*c)
 	{
 		*c = malloc(sizeof(char));
@@ -57,28 +60,34 @@ static void	init(char **c, char **mem, int *i)
 		*mem[0] = '\0';
 		*i = 0;
 	}
+	tmp = *c;
+	if (signal == SIGUSR1)
+		*c = ft_strjoin(tmp, "0");
+	else if (signal == SIGUSR2)
+		*c = ft_strjoin(tmp, "1");
+	free(tmp);
 }
 
 static void	got_elem(int signal)
 {
 	static char	*mem;
 	static char	*c;
+	char		*tmp;
+	char		*tmp2;
 	static int	i;
 
-	init(&c, &mem, &i);
-	if (signal == SIGUSR1)
-		c = ft_strjoin(c, "0");
-	if (signal == SIGUSR2)
-		c = ft_strjoin(c, "1");
+	get_signal(signal, &c, &mem, &i);
 	if (ft_strlen(c) == 8)
 	{
-		mem = ft_strjoin(mem, get_char(c));
+		tmp = mem;
+		tmp2 = get_char(c);
+		mem = ft_strjoin(tmp, tmp2);
+		double_free(&tmp, &tmp2);
 		c[0] = '\0';
 		if (mem[i] == '\0')
 		{
 			ft_putstr_fd(mem, 1);
-			mem[0] = '\0';
-			i = 0;
+			double_free(&c, &mem);
 		}
 		else
 			i++;
@@ -88,7 +97,9 @@ static void	got_elem(int signal)
 int	main(void)
 {
 	ft_putstr_fd("Hello, i'm the server.\n", 1);
-	put_pid();
+	ft_putstr_fd("PID: ", 1);
+	ft_putnbr_fd(getpid(), 1);
+	ft_putchar_fd('\n', 1);
 	while (1)
 	{
 		signal(SIGUSR1, got_elem);

@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/29 21:20:47 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/01/31 13:20:53 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,26 @@ static void	fucking_manual(void)
 static void	get_bin(unsigned int c, char **bin)
 {
 	char	*c_str;
+	char	*bin2;
 
 	c_str = malloc(2 * sizeof(char));
 	if (!c_str)
-		return ;
+		exit(0);
 	c_str[1] = '\0';
 	if (c >= 2)
 	{
 		get_bin(c / 2, bin);
 		c_str[0] = (c % 2) + '0';
-		*bin = ft_strjoin(*bin, c_str);
+		bin2 = *bin;
+		*bin = ft_strjoin(bin2, c_str);
+		free(bin2);
 	}
 	else
 	{
 		c_str[0] = c + '0';
-		*bin = ft_strjoin(*bin, c_str);
+		bin2 = *bin;
+		*bin = ft_strjoin(bin2, c_str);
+		free(bin2);
 	}
 	free(c_str);
 }
@@ -43,15 +48,20 @@ static void	get_bin(unsigned int c, char **bin)
 static void	send_one(int pid, char c)
 {
 	char	*bin;
+	char	*bin2;
 	int		i;
 
 	bin = malloc(sizeof(char));
 	if (!bin)
-		return ;
+		exit(0);
 	bin[0] = '\0';
 	get_bin((unsigned int)c, &bin);
 	while (ft_strlen(bin) < 8)
-		bin = ft_strjoin("0", bin);
+	{
+		bin2 = bin;
+		bin = ft_strjoin("0", bin2);
+		free(bin2);
+	}
 	i = -1;
 	while (bin[++i])
 	{
