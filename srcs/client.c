@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/31 13:20:53 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/01 14:19:54 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,18 @@ static void	get_bin(unsigned int c, char **bin)
 	free(c_str);
 }
 
+static void	got(int signal)
+{
+	(void) signal;
+	ft_putstr_fd("Recu !\n", 1);
+}
+
 static void	send_one(int pid, char c)
 {
-	char	*bin;
-	char	*bin2;
-	int		i;
+	char				*bin;
+	char				*bin2;
+	int					i;
+	int					ret;
 
 	bin = malloc(sizeof(char));
 	if (!bin)
@@ -66,28 +73,31 @@ static void	send_one(int pid, char c)
 	while (bin[++i])
 	{
 		if (bin[i] == '0')
-			kill(pid, SIGUSR1);
+			ret = kill(pid, SIGUSR1);
 		else if (bin[i] == '1')
-			kill(pid, SIGUSR2);
-		usleep(1000);
+			ret = kill(pid, SIGUSR2);
+		if (ret == -1)
+			exit(0);
+		signal(SIGUSR1, got);
+		signal(SIGUSR2, got);
+		pause();
 	}
 	free(bin);
 }
 
-static void	send_message(int pid, char *str)
+int	main(int ac, char **av)
 {
-	int	i;
+	int		i;
+	int		pid;
+	char	*str;
 
+	if (ac != 3)
+		fucking_manual();
+	pid = ft_atoi(av[1]);
+	str = av[2];
 	i = -1;
 	while (str[++i])
 		send_one(pid, str[i]);
 	send_one(pid, '\0');
-}
-
-int	main(int ac, char **av)
-{
-	if (ac != 3)
-		fucking_manual();
-	send_message(ft_atoi(av[1]), av[2]);
 	return (0);
 }

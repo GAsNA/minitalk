@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/01/31 13:24:48 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/01 14:29:24 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ static void	get_signal(int signal, char **c, char **mem, int *i)
 	free(tmp);
 }
 
-static void	got_elem(int signal)
+static void	got_elem(int signal, siginfo_t *siginfo, void *context)
 {
 	static char	*mem;
 	static char	*c;
@@ -76,9 +76,11 @@ static void	got_elem(int signal)
 	char		*tmp2;
 	static int	i;
 
+	(void) context;
 	get_signal(signal, &c, &mem, &i);
 	if (ft_strlen(c) == 8)
 	{
+		ft_putchar_fd('\n', 1);
 		tmp = mem;
 		tmp2 = get_char(c);
 		mem = ft_strjoin(tmp, tmp2);
@@ -92,18 +94,33 @@ static void	got_elem(int signal)
 		else
 			i++;
 	}
+	if (signal == SIGUSR1)
+	{
+		ft_putchar_fd('0', 1);
+		kill(siginfo->si_pid, SIGUSR2);
+	}
+	else
+	{
+		ft_putchar_fd('1', 1);
+		kill(siginfo->si_pid, SIGUSR1);
+	}
 }
 
 int	main(void)
 {
+	struct sigaction	sig;
+
 	ft_putstr_fd("Hello, i'm the server.\n", 1);
 	ft_putstr_fd("PID: ", 1);
 	ft_putnbr_fd(getpid(), 1);
 	ft_putchar_fd('\n', 1);
+	ft_memset(&sig, '\0', sizeof(sig));
+	sig.sa_sigaction = &got_elem;
+	sig.sa_flags = SA_SIGINFO;
 	while (1)
 	{
-		signal(SIGUSR1, got_elem);
-		signal(SIGUSR2, got_elem);
+		sigaction(SIGUSR1, &sig, NULL);
+		sigaction(SIGUSR2, &sig, NULL);
 		pause();
 	}
 	return (0);
