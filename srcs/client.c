@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/01 14:19:54 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/02 12:11:11 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	get_bin(unsigned int c, char **bin)
 static void	got(int signal)
 {
 	(void) signal;
-	ft_putstr_fd("Recu !\n", 1);
+//	ft_putstr_fd("Recu !\n", 1);
 }
 
 static void	send_one(int pid, char c)

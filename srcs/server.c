@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/01 14:29:24 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/02 12:10:56 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ static void	got_elem(int signal, siginfo_t *siginfo, void *context)
 	get_signal(signal, &c, &mem, &i);
 	if (ft_strlen(c) == 8)
 	{
-		ft_putchar_fd('\n', 1);
+	//	ft_putchar_fd('\n', 1);
 		tmp = mem;
 		tmp2 = get_char(c);
 		mem = ft_strjoin(tmp, tmp2);
@@ -96,12 +96,12 @@ static void	got_elem(int signal, siginfo_t *siginfo, void *context)
 	}
 	if (signal == SIGUSR1)
 	{
-		ft_putchar_fd('0', 1);
+	//	ft_putchar_fd('0', 1);
 		kill(siginfo->si_pid, SIGUSR2);
 	}
 	else
 	{
-		ft_putchar_fd('1', 1);
+	//	ft_putchar_fd('1', 1);
 		kill(siginfo->si_pid, SIGUSR1);
 	}
 }
