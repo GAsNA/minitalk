@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/02 12:10:56 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/04 04:28:31 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ static void	got_elem(int signal, siginfo_t *siginfo, void *context)
 	get_signal(signal, &c, &mem, &i);
 	if (ft_strlen(c) == 8)
 	{
-	//	ft_putchar_fd('\n', 1);
 		tmp = mem;
 		tmp2 = get_char(c);
 		mem = ft_strjoin(tmp, tmp2);
@@ -94,16 +93,7 @@ static void	got_elem(int signal, siginfo_t *siginfo, void *context)
 		else
 			i++;
 	}
-	if (signal == SIGUSR1)
-	{
-	//	ft_putchar_fd('0', 1);
-		kill(siginfo->si_pid, SIGUSR2);
-	}
-	else
-	{
-	//	ft_putchar_fd('1', 1);
-		kill(siginfo->si_pid, SIGUSR1);
-	}
+	kill(siginfo->si_pid, SIGUSR1);
 }
 
 int	main(void)
@@ -117,11 +107,9 @@ int	main(void)
 	ft_memset(&sig, '\0', sizeof(sig));
 	sig.sa_sigaction = &got_elem;
 	sig.sa_flags = SA_SIGINFO;
+	sigaction(SIGUSR1, &sig, NULL);
+	sigaction(SIGUSR2, &sig, NULL);
 	while (1)
-	{
-		sigaction(SIGUSR1, &sig, NULL);
-		sigaction(SIGUSR2, &sig, NULL);
 		pause();
-	}
 	return (0);
 }

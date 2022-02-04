@@ -59,7 +59,7 @@ CLIENT			=	client
 
 CC				=	clang
 RM				=	rm -rf
-CFLAGS			=	-Wall -Wextra -Werror -g
+CFLAGS			=	-Wall -Wextra -Werror -g3
 
 
 ### Commandes

@@ -6,17 +6,11 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/02 12:11:11 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/04 04:35:44 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minitalk.h"
-
-static void	fucking_manual(void)
-{
-	ft_putstr_fd("# Use: ./client [server PID] [message]\n", 1);
-	exit(0);
-}
 
 static void	get_bin(unsigned int c, char **bin)
 {
@@ -48,15 +42,31 @@ static void	get_bin(unsigned int c, char **bin)
 static void	got(int signal)
 {
 	(void) signal;
-//	ft_putstr_fd("Recu !\n", 1);
+}
+
+static void	send(int pid, char *bin)
+{
+	int	i;
+	int	ret;
+
+	i = -1;
+	while (bin[++i])
+	{
+		if (bin[i] == '0')
+			ret = kill(pid, SIGUSR1);
+		else if (bin[i] == '1')
+			ret = kill(pid, SIGUSR2);
+		if (ret == -1)
+			exit(0);
+		pause();
+	}
+	free(bin);
 }
 
 static void	send_one(int pid, char c)
 {
 	char				*bin;
 	char				*bin2;
-	int					i;
-	int					ret;
 
 	bin = malloc(sizeof(char));
 	if (!bin)
@@ -69,20 +79,7 @@ static void	send_one(int pid, char c)
 		bin = ft_strjoin("0", bin2);
 		free(bin2);
 	}
-	i = -1;
-	while (bin[++i])
-	{
-		if (bin[i] == '0')
-			ret = kill(pid, SIGUSR1);
-		else if (bin[i] == '1')
-			ret = kill(pid, SIGUSR2);
-		if (ret == -1)
-			exit(0);
-		signal(SIGUSR1, got);
-		signal(SIGUSR2, got);
-		pause();
-	}
-	free(bin);
+	send(pid, bin);
 }
 
 int	main(int ac, char **av)
@@ -92,9 +89,14 @@ int	main(int ac, char **av)
 	char	*str;
 
 	if (ac != 3)
-		fucking_manual();
+	{
+		ft_putstr_fd("# Use: ./client [server PID] [message]\n", 1);
+		return (0);
+	}
 	pid = ft_atoi(av[1]);
 	str = av[2];
+	signal(SIGUSR1, got);
+	signal(SIGUSR2, got);
 	i = -1;
 	while (str[++i])
 		send_one(pid, str[i]);
