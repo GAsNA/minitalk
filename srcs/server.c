@@ -6,93 +6,47 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/04 04:28:31 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/07 18:08:16 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minitalk.h"
 
-static void	double_free(char **s1, char **s2)
-{
-	free(*s1);
-	*s1 = NULL;
-	free(*s2);
-	*s2 = NULL;
-}
-
-static char	*get_char(char *c)
-{
-	char	*str;
-	int		i;
-	int		res;
-
-	str = malloc(2 * sizeof(char));
-	if (!str)
-		return (0);
-	i = -1;
-	res = 0;
-	while (c[++i])
-	{
-		res *= 2;
-		res += (c[i] - '0');
-	}
-	str[0] = (char)res;
-	str[1] = '\0';
-	return (str);
-}
-
-static void	get_signal(int signal, char **c, char **mem, int *i)
-{
-	char	*tmp;
-
-	if (!*c)
-	{
-		*c = malloc(sizeof(char));
-		if (!*c)
-			exit(0);
-		*c[0] = '\0';
-	}
-	if (!*mem)
-	{
-		*mem = malloc(sizeof(char));
-		if (!*mem)
-			exit(0);
-		*mem[0] = '\0';
-		*i = 0;
-	}
-	tmp = *c;
-	if (signal == SIGUSR1)
-		*c = ft_strjoin(tmp, "0");
-	else if (signal == SIGUSR2)
-		*c = ft_strjoin(tmp, "1");
-	free(tmp);
-}
-
 static void	got_elem(int signal, siginfo_t *siginfo, void *context)
 {
+	static char	c = 0;
 	static char	*mem;
-	static char	*c;
-	char		*tmp;
-	char		*tmp2;
-	static int	i;
+	static int	i = 0;
+	char		*tmp_mem;
+	char		tmp_c[2];
 
 	(void) context;
-	get_signal(signal, &c, &mem, &i);
-	if (ft_strlen(c) == 8)
+	c |= (signal == SIGUSR2);
+	if (++i == 8)
 	{
-		tmp = mem;
-		tmp2 = get_char(c);
-		mem = ft_strjoin(tmp, tmp2);
-		double_free(&tmp, &tmp2);
-		c[0] = '\0';
-		if (mem[i] == '\0')
+		if (!mem)
+		{
+			mem = malloc(sizeof(char));
+			if (!mem)
+				exit(0);
+			mem[0] = '\0';
+		}
+		tmp_mem = mem;
+		tmp_c[0] = c;
+		tmp_c[1] = '\0';
+		mem = ft_strjoin(tmp_mem, tmp_c);
+		free(tmp_mem);
+		if (c == '\0')
 		{
 			ft_putstr_fd(mem, 1);
-			double_free(&c, &mem);
+			free(mem);
+			mem = NULL;
 		}
-		else
-			i++;
+		c = 0;
+		i = 0;
 	}
+	else
+		c <<= 1;
 	kill(siginfo->si_pid, SIGUSR1);
 }
 

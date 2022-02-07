@@ -6,80 +6,34 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/04 04:35:44 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/07 18:09:19 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minitalk.h"
-
-static void	get_bin(unsigned int c, char **bin)
-{
-	char	*c_str;
-	char	*bin2;
-
-	c_str = malloc(2 * sizeof(char));
-	if (!c_str)
-		exit(0);
-	c_str[1] = '\0';
-	if (c >= 2)
-	{
-		get_bin(c / 2, bin);
-		c_str[0] = (c % 2) + '0';
-		bin2 = *bin;
-		*bin = ft_strjoin(bin2, c_str);
-		free(bin2);
-	}
-	else
-	{
-		c_str[0] = c + '0';
-		bin2 = *bin;
-		*bin = ft_strjoin(bin2, c_str);
-		free(bin2);
-	}
-	free(c_str);
-}
 
 static void	got(int signal)
 {
 	(void) signal;
 }
 
-static void	send(int pid, char *bin)
-{
-	int	i;
-	int	ret;
-
-	i = -1;
-	while (bin[++i])
-	{
-		if (bin[i] == '0')
-			ret = kill(pid, SIGUSR1);
-		else if (bin[i] == '1')
-			ret = kill(pid, SIGUSR2);
-		if (ret == -1)
-			exit(0);
-		pause();
-	}
-	free(bin);
-}
-
 static void	send_one(int pid, char c)
 {
-	char				*bin;
-	char				*bin2;
+	int	byte;
+	int	ret;
 
-	bin = malloc(sizeof(char));
-	if (!bin)
-		exit(0);
-	bin[0] = '\0';
-	get_bin((unsigned int)c, &bin);
-	while (ft_strlen(bin) < 8)
+	byte = 7;
+	while (byte >= 0)
 	{
-		bin2 = bin;
-		bin = ft_strjoin("0", bin2);
-		free(bin2);
+		if (c >> byte & 1)
+			ret = kill(pid, SIGUSR2);
+		else
+			ret = kill(pid, SIGUSR1);
+		if (ret == -1)
+			exit(0);
+		byte--;
+		pause();
 	}
-	send(pid, bin);
 }
 
 int	main(int ac, char **av)
