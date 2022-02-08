@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/07 18:09:19 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/08 10:27:39 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 static void	got(int signal)
 {
-	(void) signal;
+	if (signal == SIGUSR2)
+		ft_putstr_fd("All received!\n", 1);
 }
 
 static void	send_one(int pid, char c)

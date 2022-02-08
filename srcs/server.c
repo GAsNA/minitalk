@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/07 18:08:16 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/08 10:26:01 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ static void	got_elem(int signal, siginfo_t *siginfo, void *context)
 		if (c == '\0')
 		{
 			ft_putstr_fd(mem, 1);
+			kill(siginfo->si_pid, SIGUSR2);
 			free(mem);
 			mem = NULL;
 		}
