@@ -6,11 +6,24 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/10 15:37:35 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/10 16:28:50 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minitalk.h"
+
+typedef struct s_info	t_info;
+
+struct s_info
+{
+	char	c;
+	char	*mem;
+	int		i;
+	int		ok;
+	int		pid;
+};
+
+t_info					g_info;
 
 static void	put_pid(void)
 {
@@ -40,39 +53,50 @@ static int	init(char **mem, char *c)
 	return (1);
 }
 
+static void	check_pid(int sig_pid)
+{	
+	if (!g_info.pid || g_info.pid != sig_pid)
+	{
+		g_info.c = 0;
+		free(g_info.mem);
+		g_info.mem = 0;
+		g_info.i = 0;
+		g_info.ok = 1;
+		g_info.pid = sig_pid;
+	}
+}
+
 static void	handler(int signal, siginfo_t *siginfo, void *context)
 {
-	static char	c = 0;
-	static char	*mem;
-	static int	i = 0;
-	static int	ok = 1;
-
 	(void) context;
-	c |= (signal == SIGUSR2);
-	if (++i == 8)
+	check_pid(siginfo->si_pid);
+	g_info.c |= (signal == SIGUSR2);
+	if (++g_info.i == 8)
 	{
-		if (init(&mem, &c) && c == '\0')
+		if (init(&g_info.mem, &g_info.c) && g_info.c == '\0')
 		{
-			ok = 0;
-			ft_putstr_fd(mem, 1);
+			g_info.ok = 0;
+			ft_putstr_fd(g_info.mem, 1);
 			kill(siginfo->si_pid, SIGUSR2);
-			free(mem);
-			mem = NULL;
+			free(g_info.mem);
+			g_info.mem = 0;
 		}
-		c = 0;
-		i = 0;
+		g_info.c = 0;
+		g_info.i = 0;
 	}
 	else
-		c <<= 1;
-	if (ok)
+		g_info.c <<= 1;
+	if (g_info.ok)
 		kill(siginfo->si_pid, SIGUSR1);
-	ok = 1;
+	g_info.ok = 1;
 }
 
 int	main(void)
 {
 	struct sigaction	sig;
 
+	g_info.pid = 0;
+	g_info.mem = 0;
 	put_pid();
 	ft_memset(&sig, '\0', sizeof(sig));
 	sig.sa_sigaction = &handler;
