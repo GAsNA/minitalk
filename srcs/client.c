@@ -6,55 +6,65 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:21:37 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/08 10:27:39 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/10 15:03:51 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minitalk.h"
 
-static void	got(int signal)
+typedef struct s_info	t_info;
+
+struct s_info
 {
+	int		pid;
+	char	*mess;
+};
+
+t_info					g_info;
+
+static void	handler(int signal)
+{
+	int			ret;
+	static int	byte = 8;
+	static int	i = 0;
+
 	if (signal == SIGUSR2)
-		ft_putstr_fd("All received!\n", 1);
-}
-
-static void	send_one(int pid, char c)
-{
-	int	byte;
-	int	ret;
-
-	byte = 7;
-	while (byte >= 0)
 	{
-		if (c >> byte & 1)
-			ret = kill(pid, SIGUSR2);
+		ft_putstr_fd("All received!\n", 1);
+		exit(0);
+	}
+	if (--byte == -1)
+	{
+		byte = 8;
+		i++;
+		handler(SIGUSR1);
+	}
+	else
+	{
+		if (g_info.mess[i] >> byte & 1)
+			ret = kill(g_info.pid, SIGUSR2);
 		else
-			ret = kill(pid, SIGUSR1);
+			ret = kill(g_info.pid, SIGUSR1);
 		if (ret == -1)
 			exit(0);
-		byte--;
-		pause();
 	}
 }
 
 int	main(int ac, char **av)
 {
-	int		i;
-	int		pid;
-	char	*str;
-
 	if (ac != 3)
 	{
 		ft_putstr_fd("# Use: ./client [server PID] [message]\n", 1);
 		return (0);
 	}
-	pid = ft_atoi(av[1]);
-	str = av[2];
-	signal(SIGUSR1, got);
-	signal(SIGUSR2, got);
-	i = -1;
-	while (str[++i])
-		send_one(pid, str[i]);
-	send_one(pid, '\0');
+	g_info.pid = ft_atoi(av[1]);
+	if (g_info.pid <= 0)
+		return (0);
+	g_info.mess = av[2];
+	signal(SIGUSR1, handler);
+	signal(SIGUSR2, handler);
+	handler(SIGUSR1);
+	while (1)
+		pause();
 	return (0);
 }
