@@ -51,9 +51,6 @@ SRCS_C			=	${SRCS_PATH}client.c
 OBJS_S			=	${SRCS_S:.c=.o}
 OBJS_C			=	${SRCS_C:.c=.o}
 
-HEADERS_PATH	=	./headers/
-HEADER			=	${HEADERS_PATH}minitalk.h
-
 SERVER			=	server
 CLIENT			=	client
 
@@ -75,7 +72,7 @@ ${CLIENT}:		${OBJS_C} ${LIBFT}
 				${CREATED_BIN}
 
 .c.o:
-				${CC} -c ${CFLAGS} -I${HEADER} $^ -o $@
+				${CC} -c ${CFLAGS} $^ -o $@
 
 ${LIBFT}:
 				make -C ${LIBFT_PATH}

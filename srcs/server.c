@@ -6,11 +6,12 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/10 16:28:50 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/14 13:42:28 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minitalk.h"
+#include "../librairies/Libft/libft.h"
+#include <signal.h>
 
 typedef struct s_info	t_info;
 
