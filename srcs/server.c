@@ -6,7 +6,7 @@
 /*   By: rleseur <rleseur@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/13 19:19:41 by rleseur           #+#    #+#             */
-/*   Updated: 2022/02/14 13:42:28 by rleseur          ###   ########.fr       */
+/*   Updated: 2022/02/14 14:09:38 by rleseur          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,6 @@ struct s_info
 	int		ok;
 	int		pid;
 };
-
-t_info					g_info;
 
 static void	put_pid(void)
 {
@@ -54,50 +52,50 @@ static int	init(char **mem, char *c)
 	return (1);
 }
 
-static void	check_pid(int sig_pid)
+static void	check_pid(t_info *infos, int sig_pid)
 {	
-	if (!g_info.pid || g_info.pid != sig_pid)
+	if (!infos->pid || infos->pid != sig_pid)
 	{
-		g_info.c = 0;
-		free(g_info.mem);
-		g_info.mem = 0;
-		g_info.i = 0;
-		g_info.ok = 1;
-		g_info.pid = sig_pid;
+		infos->c = 0;
+		free(infos->mem);
+		infos->mem = 0;
+		infos->i = 0;
+		infos->ok = 1;
+		infos->pid = sig_pid;
 	}
 }
 
 static void	handler(int signal, siginfo_t *siginfo, void *context)
 {
+	static t_info	infos;
+
 	(void) context;
-	check_pid(siginfo->si_pid);
-	g_info.c |= (signal == SIGUSR2);
-	if (++g_info.i == 8)
+	check_pid(&infos, siginfo->si_pid);
+	infos.c |= (signal == SIGUSR2);
+	if (++infos.i == 8)
 	{
-		if (init(&g_info.mem, &g_info.c) && g_info.c == '\0')
+		if (init(&infos.mem, &infos.c) && infos.c == '\0')
 		{
-			g_info.ok = 0;
-			ft_putstr_fd(g_info.mem, 1);
+			infos.ok = 0;
+			ft_putstr_fd(infos.mem, 1);
 			kill(siginfo->si_pid, SIGUSR2);
-			free(g_info.mem);
-			g_info.mem = 0;
+			free(infos.mem);
+			infos.mem = 0;
 		}
-		g_info.c = 0;
-		g_info.i = 0;
+		infos.c = 0;
+		infos.i = 0;
 	}
 	else
-		g_info.c <<= 1;
-	if (g_info.ok)
+		infos.c <<= 1;
+	if (infos.ok)
 		kill(siginfo->si_pid, SIGUSR1);
-	g_info.ok = 1;
+	infos.ok = 1;
 }
 
 int	main(void)
 {
 	struct sigaction	sig;
 
-	g_info.pid = 0;
-	g_info.mem = 0;
 	put_pid();
 	ft_memset(&sig, '\0', sizeof(sig));
 	sig.sa_sigaction = &handler;
